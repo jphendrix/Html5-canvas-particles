@@ -105,139 +105,11 @@ var canvas;
 var c;
 var particleArray = [];
 
-// TODO: kill
-var ParticleGUI = function() {
-  this.particles = NOW_PARTICLES;
-  this.color = COLOR;
-  this.type = TYPE_PARTICLE;
-  this.position = POSITION;
-  this.random_color = RANDOM_COLOR;
-  this.velocity = VELOCITY;
-  this.backcolor = BACK_COLOR;
-  this.stroke_size = STROKE_SIZE;
-  this.stroke_color = STROKE_COLOR;
-  this.opacity =  OPACITY;
-  this.size = PARTICLE_SIZE;
-  this.random_size = RANDOM_SIZE;
-  this.particle_dead = DEAD_PARTICLE;
-  this.shadow_blur = SHADOW_BLUR;
-  this.Export = function() {
-    generate(1);
-  };
-  this.Preview = function() {
-    generate(0);
-  };
-};
-
-// TODO: kill
-function generate(type){
-  postwith('export.php',{
-       TYPE:type,
-       MAX_PARTICLES:MAX_PARTICLES,
-       NOW_PARTICLES:NOW_PARTICLES,
-       COLOR:COLOR,
-       TYPE_PARTICLE:TYPE_PARTICLE,
-       POSITION:POSITION,
-       RANDOM_COLOR:RANDOM_COLOR,
-       VELOCITY:VELOCITY,
-       BACK_COLOR:BACK_COLOR,
-       MAX_SIZE:MAX_SIZE,
-       STROKE_SIZE:STROKE_SIZE,
-       STROKE_COLOR:STROKE_COLOR,
-       OPACITY:OPACITY,
-       RANDOM_SIZE:RANDOM_SIZE,
-       PARTICLE_SIZE:PARTICLE_SIZE,
-       DEAD_PARTICLE:DEAD_PARTICLE,
-       SHADOW_BLUR:SHADOW_BLUR
-    });
-}
-
-// TODO: kill all but init()
-window.onload = function() {
-  var text = new ParticleGUI();
-  var gui = new dat.GUI();
-  var controller_particules = gui.add(text, 'particles', 1, MAX_PARTICLES);
-  controller_particules.onFinishChange(function(value) {
-      NOW_PARTICLES = Math.round(value);
-  });
-  var controller_color = gui.addColor(text, 'color', COLOR);
-  controller_color.onChange(function(value){
-       COLOR = value;
-  });
-  var controller_color_rand = gui.add(text, 'random_color', { OFF: 0, ON: 1 } );
-  controller_color_rand.onChange(function(value){
-       RANDOM_COLOR = value;
-  });
-  var controller_type = gui.add(text, 'type', { Rect: 'rect', Circle: 'circle', Triangle:'triangle'} );
-  controller_type.onChange(function(value){
-       TYPE_PARTICLE = value;
-  });
-  var controller_position = gui.add(text, 'position', { Mouse: 'mouse', Center: 'center', Random: 'random'} );
-  controller_position.onChange(function(value){
-       POSITION = value;
-  });
-  var controller_velocity = gui.add(text, 'velocity', 1, MAX_VELOCITY);
-  controller_velocity.onFinishChange(function(value) {
-      VELOCITY = Math.round(value);
-  });
-  var controller_back_color = gui.addColor(text, 'backcolor', BACK_COLOR);
-  controller_back_color.onChange(function(value){
-       BACK_COLOR = value;
-  });
-  var controller_size_rand = gui.add(text, 'random_size', { OFF: 0, ON: 1 } );
-  controller_size_rand.onChange(function(value){
-       RANDOM_SIZE = value;
-  });
-  var controller_size = gui.add(text, 'size', 1, MAX_SIZE);
-  controller_size.onFinishChange(function(value) {
-      PARTICLE_SIZE = Math.round(value);
-  });
-  var controller_stroke_size = gui.add(text, 'stroke_size', 0, MAX_STROKE_SIZE);
-  controller_stroke_size.onFinishChange(function(value) {
-      STROKE_SIZE = Math.round(value);
-  });
-  var controller_stroke_color = gui.addColor(text, 'stroke_color', STROKE_COLOR);
-  controller_stroke_color.onChange(function(value){
-       STROKE_COLOR = value;
-  });
-  var controller_opacity = gui.add(text, 'opacity', 0, 1);
-  controller_opacity.onFinishChange(function(value) {
-      OPACITY = value;
-  });
-  var controller_dead_particle = gui.add(text, 'particle_dead', { OFF: 0, ON: 1 } );
-  controller_dead_particle.onChange(function(value){
-       DEAD_PARTICLE = value;
-  });
-  var controller_shadow_blur = gui.add(text, 'shadow_blur', 0,10);
-  controller_shadow_blur.onFinishChange(function(value) {
-      SHADOW_BLUR = Math.round(value);
-  });
-
-  gui.add(text, 'Preview');
-  gui.add(text, 'Export');
-
-  init();
-
-};
-
 $(window).resize(function(){
   var canvas = document.getElementById('canvas');
   canvas.width=window.innerWidth;
   canvas.height = window.innerHeight;
 });
-
-
-// TODO: kill
-function getMousePos(canvas, evt) {
-  var rect = canvas.getBoundingClientRect();
-  var root = document.documentElement;
-  var mouseX = evt.clientX - rect.top - root.scrollTop;
-  var mouseY = evt.clientY - rect.left - root.scrollLeft;
-  return {
-      x: mouseX,
-      y: mouseY
-  };
-}
 
 function createParticle(){
 
@@ -275,27 +147,20 @@ function createParticle(){
   return particle;
 }
 
-function init(){
+window.onload = function() {
+  canvas = document.getElementById("canvas");
+  c = canvas.getContext("2d");
+  c.canvas.width  = window.innerWidth;
+  c.canvas.height = window.innerHeight;
 
-    canvas = document.getElementById("canvas");
-    c = canvas.getContext("2d");
-    c.canvas.width  = window.innerWidth;
-    c.canvas.height = window.innerHeight;
-
-    canvas.addEventListener('mousemove', function(evt) {
-      var mousePos = getMousePos(canvas, evt);
-      mousePosX = mousePos.x;
-      mousePosY = mousePos.y;
-    }, false);
-
-    generateParticles();
-    animate();
+  generateParticles();
+  animate();
 }
 
 function generateParticles(){
   for (var i = 0; i < MAX_PARTICLES; i++) {
-        particleArray.push(createParticle());
-    }
+    particleArray.push(createParticle());
+  }
 }
 
 function draw(){
