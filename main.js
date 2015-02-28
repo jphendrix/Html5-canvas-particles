@@ -68,12 +68,12 @@ var COLORS = [
   '#d35400', /* orange  */
   '#e74c3c' /* red     */
 ];
+var BACK_COLOR = '#FFFFFF';
 var MAX_PARTICLES = 500;
 var NOW_PARTICLES = 50;
 var VELOCITY = 0.18;
-var BACK_COLOR = '#FFFFFF';
+var MIN_SIZE = 3;
 var MAX_SIZE = 8;
-var PARTICLE_SIZE = 5;
 
 var canvas;
 var c;
@@ -89,7 +89,7 @@ function createParticle() {
   particle.xSpeed = randomRange((-1) * VELOCITY, VELOCITY);
   particle.ySpeed = randomRange((-1) * VELOCITY, VELOCITY);
 
-  particle.size  = randomRange(3, MAX_SIZE);
+  particle.size  = randomRange(MIN_SIZE, MAX_SIZE);
   particle.color = COLORS[Math.floor(Math.random() * COLORS.length)];
 
   return particle;
