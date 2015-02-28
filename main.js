@@ -1,39 +1,16 @@
 /**
- * @projectDescription   Canvas Particles Test
+ * Canvas Particles
  *
- * @author   Diego Vilariño - http://www.dieg0v.com - @dieg0v - http://www.sond3.com
- * @version  0.1
+ * based on work of Diego Vilariño - https://github.com/dieg0v/Html5-canvas-particles
+ * @version 0.1
+ *
  */
 
-// Utils.js
-
-function randomRange(min, max) {
-  return ((Math.random() * (max - min)) + min);
-}
-
-function cutHex(h) {
-  return (h.charAt(0) == "#") ? h.substring(1, 7) : h;
-}
-
-function hexToR(h) {
-  return parseInt((cutHex(h)).substring(0, 2), 16);
-}
-
-function hexToG(h) {
-  return parseInt((cutHex(h)).substring(2, 4), 16);
-}
-
-function hexToB(h) {
-  return parseInt((cutHex(h)).substring(4, 6), 16);
-}
-
-// end Utils.js
-
-// RequestAnimationFrame.js
-
-/**
+/** begin RequestAnimationFrame.js
+ *
  * Provides requestAnimationFrame in a cross browser way.
  * http://paulirish.com/
+ *
  */
 
 if (!window.requestAnimationFrame) {
@@ -52,6 +29,12 @@ if (!window.requestAnimationFrame) {
 
 // end RequestAnimationFrame.js
 
+var BACK_COLOR = '#FFFFFF';
+var MAX_PARTICLES = 500;
+var NOW_PARTICLES = 50;
+var VELOCITY = 0.18;
+var MIN_SIZE = 3;
+var MAX_SIZE = 8;
 var COLORS = [
   // thanks http://flatuicolors.com/
   '#1abc9c', /* aqua    */
@@ -68,16 +51,14 @@ var COLORS = [
   '#d35400', /* orange  */
   '#e74c3c' /* red     */
 ];
-var BACK_COLOR = '#FFFFFF';
-var MAX_PARTICLES = 500;
-var NOW_PARTICLES = 50;
-var VELOCITY = 0.18;
-var MIN_SIZE = 3;
-var MAX_SIZE = 8;
 
 var canvas;
 var c;
 var particleArray = [];
+
+function randomRange(min, max) {
+  return ((Math.random() * (max - min)) + min);
+}
 
 function createParticle() {
 
