@@ -66,6 +66,7 @@ if (!window.requestAnimationFrame) {
 var MAX_PARTICLES = 500;
 var NOW_PARTICLES = 50;
 var COLOR = "#ffae23";
+var COLORS = ['red', 'green', 'blue', 'orange', 'yellow'];
 var TYPE_PARTICLE = "circle";
 var POSITION = "random";
 var RANDOM_COLOR = 0;
@@ -251,7 +252,10 @@ function createParticle(){
   }else{
     size = PARTICLE_SIZE;
   }
-  particle.size  = size;
+  particle.size = size;
+
+  var color = COLORS[Math.floor(Math.random() * COLORS.length)];
+  particle.color = color;
 
   return particle;
 }
@@ -289,20 +293,10 @@ function draw(){
 
       var particle = particleArray[i];
 
-      var particle_color = COLOR;
-      if(RANDOM_COLOR==1){
-        var r = Math.random()*255>>0;
-        var g = Math.random()*255>>0;
-        var b = Math.random()*255>>0;
-        particle_color = "rgba("+r+", "+g+", "+b+", "+OPACITY+")";
-      }else{
-        particle_color = "rgba("+hexToR(particle_color)+", "+hexToG(particle_color)+", "+hexToB(particle_color)+", "+OPACITY+")";
-      }
-
       c.beginPath();
 
       c.lineWidth = STROKE_SIZE;
-      c.fillStyle = particle_color;
+      c.fillStyle = particle.color;
 
       if(SHADOW_BLUR>0){
         c.shadowBlur = SHADOW_BLUR;
