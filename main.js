@@ -66,11 +66,26 @@ if (!window.requestAnimationFrame) {
 var MAX_PARTICLES = 500;
 var NOW_PARTICLES = 50;
 var COLOR = "#ffae23";
-var COLORS = ['red', 'green', 'blue', 'orange', 'yellow'];
+var COLORS = [
+  // thanks http://flatuicolors.com/
+  '#1abc9c', /* aqua    */
+  '#16a085', /* aqua    */
+  '#2ecc71', /* green   */
+  '#27ae60', /* green   */
+  '#3498db', /* blue    */
+  '#2980b9', /* blue    */
+  '#9b59b6', /* purple  */
+  '#8e44ad', /* purple  */
+  '#f1c40f', /* yellow  */
+  '#f39c12', /* orange  */
+  '#e67e22', /* orange  */
+  '#d35400', /* orange  */
+  '#e74c3c' /* red     */
+];
 var TYPE_PARTICLE = "circle";
 var POSITION = "random";
 var RANDOM_COLOR = 0;
-var VELOCITY = 0.5;
+var VELOCITY = 0.18;
 var MAX_VELOCITY = 20;
 var BACK_COLOR= '#FFFFFF';
 var MAX_SIZE = 8;
