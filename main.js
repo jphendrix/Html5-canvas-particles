@@ -71,7 +71,7 @@ var POSITION = "random";
 var RANDOM_COLOR = 0;
 var VELOCITY = 0.5;
 var MAX_VELOCITY = 20;
-var BACK_COLOR= '#333333';
+var BACK_COLOR= '#FFFFFF';
 var MAX_SIZE = 8;
 var MAX_STROKE_SIZE = 10;
 var STROKE_SIZE = 0;
@@ -89,7 +89,7 @@ var canvas;
 var c;
 var particleArray = [];
 
-
+// TODO: kill
 var ParticleGUI = function() {
   this.particles = NOW_PARTICLES;
   this.color = COLOR;
@@ -113,6 +113,7 @@ var ParticleGUI = function() {
   };
 };
 
+// TODO: kill
 function generate(type){
   postwith('export.php',{
        TYPE:type,
@@ -135,6 +136,7 @@ function generate(type){
     });
 }
 
+// TODO: kill all but init()
 window.onload = function() {
   var text = new ParticleGUI();
   var gui = new dat.GUI();
@@ -208,6 +210,8 @@ $(window).resize(function(){
   canvas.height = window.innerHeight;
 });
 
+
+// TODO: kill
 function getMousePos(canvas, evt) {
   var rect = canvas.getBoundingClientRect();
   var root = document.documentElement;
