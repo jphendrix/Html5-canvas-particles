@@ -128,18 +128,11 @@ function draw() {
 
     var particle = particleArray[i];
     c.beginPath();
-    c.lineWidth = STROKE_SIZE;
     c.fillStyle = particle.color;
-
-    var particle_stroke_color = "rgba(" + hexToR(STROKE_COLOR) + ", " + hexToG(STROKE_COLOR) + ", " + hexToB(STROKE_COLOR) + ", " + OPACITY + ")";
-    c.strokeStyle = particle_stroke_color;
 
     var radius = particle.size / 2;
     c.arc(particle.x, particle.y, radius, 0, 2 * Math.PI, false);
     c.fill();
-    if (STROKE_SIZE > 0) {
-      c.stroke();
-    }
 
     c.closePath();
 
@@ -147,9 +140,9 @@ function draw() {
     particle.y = particle.y + particle.ySpeed;
 
     if (particle.x < -(particle.size) ||
-      particle.y < -(particle.size) ||
-      particle.x > window.innerWidth + particle.size ||
-      particle.y > window.innerHeight + particle.size) {
+        particle.y < -(particle.size) ||
+        particle.x > window.innerWidth + particle.size ||
+        particle.y > window.innerHeight + particle.size) {
       particleArray[i] = createParticle();
     }
   }
