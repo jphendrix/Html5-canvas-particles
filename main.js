@@ -52,9 +52,6 @@ if (!window.requestAnimationFrame) {
 
 // end RequestAnimationFrame.js
 
-var MAX_PARTICLES = 500;
-var NOW_PARTICLES = 50;
-var COLOR = "#ffae23";
 var COLORS = [
   // thanks http://flatuicolors.com/
   '#1abc9c', /* aqua    */
@@ -71,30 +68,16 @@ var COLORS = [
   '#d35400', /* orange  */
   '#e74c3c' /* red     */
 ];
-var TYPE_PARTICLE = "circle";
-var POSITION = "random";
-var RANDOM_COLOR = 0;
+var MAX_PARTICLES = 500;
+var NOW_PARTICLES = 50;
 var VELOCITY = 0.18;
-var MAX_VELOCITY = 20;
 var BACK_COLOR = '#FFFFFF';
 var MAX_SIZE = 8;
-var MAX_STROKE_SIZE = 10;
-var STROKE_SIZE = 0;
-var STROKE_COLOR = '#ffffff';
-var OPACITY = 1;
-var RANDOM_SIZE = 1;
 var PARTICLE_SIZE = 5;
-var DEAD_PARTICLE = 0;
 
 var canvas;
 var c;
 var particleArray = [];
-
-$(window).resize(function () {
-  var canvas = document.getElementById('canvas');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-});
 
 function createParticle() {
 
@@ -152,6 +135,12 @@ function animate() {
   requestAnimationFrame(animate);
   draw();
 }
+
+$(window).resize(function () {
+  var canvas = document.getElementById('canvas');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+});
 
 window.onload = function () {
   canvas = document.getElementById("canvas");
