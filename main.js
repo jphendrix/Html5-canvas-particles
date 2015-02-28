@@ -85,7 +85,6 @@ var OPACITY = 1;
 var RANDOM_SIZE = 1;
 var PARTICLE_SIZE = 5;
 var DEAD_PARTICLE = 0;
-var SHADOW_BLUR = 0;
 
 var canvas;
 var c;
@@ -131,18 +130,6 @@ function draw() {
     c.beginPath();
     c.lineWidth = STROKE_SIZE;
     c.fillStyle = particle.color;
-
-    if (SHADOW_BLUR > 0) {
-      c.shadowBlur = SHADOW_BLUR;
-      c.shadowOffsetX = 1;
-      c.shadowOffsetY = 1;
-      c.shadowColor = "rgba(100, 100, 100, 1)";
-    } else {
-      c.shadowBlur = null;
-      c.shadowOffsetX = 0;
-      c.shadowOffsetY = 0;
-      c.shadowColor = "rgba(100, 100, 100, 0)";
-    }
 
     var particle_stroke_color = "rgba(" + hexToR(STROKE_COLOR) + ", " + hexToG(STROKE_COLOR) + ", " + hexToB(STROKE_COLOR) + ", " + OPACITY + ")";
     c.strokeStyle = particle_stroke_color;
