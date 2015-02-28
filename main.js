@@ -67,19 +67,19 @@ var MAX_PARTICLES = 500;
 var NOW_PARTICLES = 50;
 var COLOR = "#ffae23";
 var TYPE_PARTICLE = "circle";
-var POSITION = "center";
+var POSITION = "random";
 var RANDOM_COLOR = 0;
-var VELOCITY = 2;
+var VELOCITY = 0.5;
 var MAX_VELOCITY = 20;
 var BACK_COLOR= '#333333';
-var MAX_SIZE = 20;
+var MAX_SIZE = 8;
 var MAX_STROKE_SIZE = 10;
 var STROKE_SIZE = 0;
 var STROKE_COLOR = '#ffffff';
 var OPACITY = 1;
 var RANDOM_SIZE = 1;
 var PARTICLE_SIZE = 5;
-var DEAD_PARTICLE = 1;
+var DEAD_PARTICLE = 0;
 var SHADOW_BLUR = 0;
 
 var mousePosX = window.innerWidth/2;
@@ -243,7 +243,7 @@ function createParticle(){
 
   var size;
   if(RANDOM_SIZE==1){
-    size = randomRange(1,MAX_SIZE);
+    size = randomRange(3,MAX_SIZE);
   }else{
     size = PARTICLE_SIZE;
   }
