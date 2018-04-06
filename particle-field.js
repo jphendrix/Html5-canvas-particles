@@ -100,7 +100,7 @@ function draw() {
     particle.x = particle.x + particle.xSpeed;
     particle.y = particle.y + particle.ySpeed;
 
-    //bounce and evaporatoin
+    //bounce and evaporation
     if (particle.x >= window.innerWidth || particle.x <= 0) {
       particle.xSpeed *= -1.1;
       particle.ySpeed *= 1.01;
@@ -112,7 +112,7 @@ function draw() {
       particle.size *= 0.99;
     }
 
-    //recyvle particles that fly off the screen
+    //recycle particles that fly off the screen
     if (particle.x < -(particle.size) ||
       particle.y < -(particle.size) ||
       particle.x > window.innerWidth + particle.size ||
