@@ -25,10 +25,11 @@ if (!window.requestAnimationFrame) {
   })();
 }
 
+var C = 100;
 var SUN_X = 500;
 var SUN_Y = 500;
 var BACK_COLOR = 'black';
-var MAX_PARTICLES = 80;
+var MAX_PARTICLES = 60;
 var NOW_PARTICLES = 50;
 var VELOCITY = 0.50;
 var MIN_SIZE = 3;
@@ -86,32 +87,54 @@ function draw() {
 
     c.closePath();
 
-    if(particle.x > SUN_X && particle.x != SUN_X){
-      particle.xSpeed -= 0.001;
-    }else{
-      particle.xSpeed += 0.001;
+    var Fg = function(p1,p2){
+      var D = function(x1,x2,y1,y2){
+        return Math.max(Math.sqrt(Math.pow(x2-x1,2) + Math.pow(y2-y1,2)),1.0);
+      }
+      var R = D(p1.x,p2.x,p1.y,p2.y)/2;
+
+      return (((p1.size*p2.size)/20)/(Math.pow(R,2)))/p1.size;
     }
 
-    if(particle.y > SUN_Y && particle.y != SUN_Y){
-      particle.ySpeed -= 0.001;
-    }else{
-      particle.ySpeed += 0.001;
-    }
+    var applyF = function(p1,p2){
+      var F = Fg(p1,p2);
 
-    particle.x = particle.x + particle.xSpeed;
-    particle.y = particle.y + particle.ySpeed;
+      if(p1.x > p2.x){
+        p1.xSpeed -= F;
+      }else{
+        p1.xSpeed += F;
+      }
+
+      if(p1.y > p2.y){
+        p1.ySpeed -= F;
+      }else{
+        p1.ySpeed += F;
+      }
+    }
+    for(let p=0; p< NOW_PARTICLES; p++){
+      if(p!=i){
+        let particle2 = particleArray[p];
+        applyF(particle,particle2);
+      }
+    }
+    applyF(particle,{x:SUN_X,y:SUN_Y,size:100});
+
+    particle.x = Math.max(Math.min(particle.x + particle.xSpeed,window.innerWidth),0);
+    particle.y = Math.max(Math.min(particle.y + particle.ySpeed,window.innerHeight),0)
 
     //bounce and evaporation
+
     if (particle.x >= window.innerWidth || particle.x <= 0) {
-      particle.xSpeed *= -1.1;
-      particle.ySpeed *= 1.01;
-      particle.size *= 0.99;
+      particle.xSpeed *= -0.25;
+      particle.ySpeed *= 0.25;
+      particle.size *= 0.75;
     }
     if (particle.y >= window.innerHeight || particle.y <= 0) {
-      particle.ySpeed *= -1.1;
-      particle.xSpeed *= 1.01;
-      particle.size *= 0.99;
+      particle.ySpeed *= -0.25;
+      particle.xSpeed *= 0.25;
+      particle.size *= 0.75;
     }
+
 
     //recycle particles that fly off the screen
     if (particle.x < -(particle.size) ||
