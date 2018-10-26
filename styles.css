@@ -4,11 +4,10 @@
 * @author   Diego Vilariño - http://www.dieg0v.com - @dieg0v - http://www.sond3.com
 * @version  0.1
 */
-
-html,body {
-	margin: 0;
-	padding: 0;
-	overflow: hidden;
-    width:  100%;
-    height: 100%;
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
 }

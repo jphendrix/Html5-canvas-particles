@@ -25,31 +25,20 @@ if (!window.requestAnimationFrame) {
   })();
 }
 
+var SUN_X = 500;
+var SUN_Y = 500;
 var BACK_COLOR = 'black';
-var MAX_PARTICLES = 500;
-var NOW_PARTICLES = 80;
+var MAX_PARTICLES = 80;
+var NOW_PARTICLES = 50;
 var VELOCITY = 0.50;
 var MIN_SIZE = 3;
 var MAX_SIZE = 10;
 var COLORS = [
   // thanks http://flatuicolors.com/
-  '#1abc9c' /* aqua */ 
-  , '#16a085' /* aqua */ 
-  , '#2ecc71' /* green */ 
-  , '#27ae60' /* green */ 
-  , '#3498db' /* blue */ 
-  , '#2980b9' /* blue */ 
-  , '#9b59b6' /* purple */ 
-  , '#8e44ad' /* purple */ 
-  , '#f1c40f' /* yellow */ 
-  , '#f39c12' /* orange */ 
-  , '#e67e22' /* orange */ 
-  , '#d35400' /* orange */ 
-  , '#e74c3c' /* red */
+  '#1abc9c' /* aqua */ , '#16a085' /* aqua */ , '#2ecc71' /* green */ , '#27ae60' /* green */ , '#3498db' /* blue */ , '#2980b9' /* blue */ , '#9b59b6' /* purple */ , '#8e44ad' /* purple */ , '#f1c40f' /* yellow */ , '#f39c12' /* orange */ , '#e67e22' /* orange */ , '#d35400' /* orange */ , '#e74c3c' /* red */
   //,'#000000' /* black */
   //,'#a9a9a9' /* black */
-  , '#ffffff' /* white */ 
-  , '#d3d3d3' /* white */
+  , '#ffffff' /* white */ , '#d3d3d3' /* white */
 ];
 
 var canvas;
@@ -97,6 +86,18 @@ function draw() {
 
     c.closePath();
 
+    if(particle.x > SUN_X && particle.x != SUN_X){
+      particle.xSpeed -= 0.001;
+    }else{
+      particle.xSpeed += 0.001;
+    }
+
+    if(particle.y > SUN_Y && particle.y != SUN_Y){
+      particle.ySpeed -= 0.001;
+    }else{
+      particle.ySpeed += 0.001;
+    }
+
     particle.x = particle.x + particle.xSpeed;
     particle.y = particle.y + particle.ySpeed;
 
@@ -131,6 +132,13 @@ $(window).resize(function() {
   var canvas = document.getElementById('canvas');
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
+});
+
+$(window).click(function(e){
+  SUN_X = e.pageX;
+  SUN_Y = e.pageY;
+
+  console.log(SUN_X,SUN_Y);
 });
 
 window.onload = function() {
