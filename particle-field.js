@@ -25,22 +25,12 @@ if (!window.requestAnimationFrame) {
   })();
 }
 
-var C = 100;
-var SUN_X = 500;
-var SUN_Y = 500;
-var BACK_COLOR = 'black';
-var MAX_PARTICLES = 60;
-var NOW_PARTICLES = 50;
-var VELOCITY = 0.50;
-var MIN_SIZE = 3;
-var MAX_SIZE = 10;
-var COLORS = [
-  // thanks http://flatuicolors.com/
-  '#1abc9c' /* aqua */ , '#16a085' /* aqua */ , '#2ecc71' /* green */ , '#27ae60' /* green */ , '#3498db' /* blue */ , '#2980b9' /* blue */ , '#9b59b6' /* purple */ , '#8e44ad' /* purple */ , '#f1c40f' /* yellow */ , '#f39c12' /* orange */ , '#e67e22' /* orange */ , '#d35400' /* orange */ , '#e74c3c' /* red */
-  //,'#000000' /* black */
-  //,'#a9a9a9' /* black */
-  , '#ffffff' /* white */ , '#d3d3d3' /* white */
-];
+const C = 5;
+const BACK_COLOR = 'black';
+const MAX_PARTICLES = 50;
+const NOW_PARTICLES = 3;
+const MIN_SIZE = 1;
+const MAX_SIZE = 100000;
 
 var canvas;
 var c;
@@ -54,14 +44,20 @@ function createParticle() {
 
   var particle = {};
 
+	particle.tail = [];
   particle.x = randomRange(0, window.innerWidth);
   particle.y = randomRange(0, window.innerHeight);
 
-  particle.xSpeed = randomRange((-1) * VELOCITY, VELOCITY);
-  particle.ySpeed = randomRange((-1) * VELOCITY, VELOCITY);
+	for(let i=0; i<500; i++){
+		particle.tail.push({x:particle.x,y:particle.y});
+	}
 
-  particle.size = randomRange(MIN_SIZE, MAX_SIZE);
-  particle.color = COLORS[Math.floor(Math.random() * COLORS.length)];
+	let v = randomRange(0,C)/100;
+  particle.xSpeed = randomRange((-1) * v, v);
+  particle.ySpeed = randomRange((-1) * v, v);
+
+  particle.size = randomRange(MIN_SIZE, MAX_SIZE)/1000;
+  particle.color = `rgb(${randomRange(0, 255)}, ${randomRange(0, 255)}, ${randomRange(0, 255)}, ${.5})`
 
   return particle;
 }
@@ -72,9 +68,39 @@ function generateParticles() {
   }
 }
 
+//Distiance
+function D(p1,p2){
+	return Math.max(Math.sqrt(Math.pow(p2.x-p1.x,2) + Math.pow(p2.y-p1.y,2)),1.0);
+}
+
+//Force of g between two objects
+function Fg(p1,p2){
+	var d = D(p1,p2);
+	return ((((p1.size*p2.size)/20)/(Math.pow(d,1)))/Math.pow(p1.size,3))*2.5;
+}
+
+function applyF(p1,p2){
+	var F = Fg(p1,p2);
+
+	if(p1.x > p2.x){
+		p1.xSpeed -= F * (1-(Math.abs(p1.xSpeed)/C));
+	}else{
+			p1.xSpeed += F * (1-(Math.abs(p1.xSpeed)/C));
+	}
+
+	if(p1.y > p2.y){
+		p1.ySpeed -= F * (1-(Math.abs(p1.xSpeed)/C));
+	}else{
+		p1.ySpeed += F * (1-(Math.abs(p1.xSpeed)/C));
+	}
+
+
+}
+
 function draw() {
-  c.fillStyle = BACK_COLOR;
+	c.fillStyle = BACK_COLOR;
   c.fillRect(0, 0, window.innerWidth, window.innerHeight);
+
   for (var i = 0; i < NOW_PARTICLES; i++) {
 
     var particle = particleArray[i];
@@ -83,58 +109,62 @@ function draw() {
 
     var radius = particle.size / 2;
     c.arc(particle.x, particle.y, radius, 0, 2 * Math.PI, false);
-    c.fill();
+		c.fill()
+		c.beginPath()
+		c.moveTo(particle.x,particle.y)
+		for(let t=0; t<particle.tail.length; t++){
+			c.lineTo(particle.tail[t].x,particle.tail[t].y);
+		}
+		c.strokeStyle = particle.color;
+		c.stroke();
 
     c.closePath();
 
-    var Fg = function(p1,p2){
-      var D = function(x1,x2,y1,y2){
-        return Math.max(Math.sqrt(Math.pow(x2-x1,2) + Math.pow(y2-y1,2)),1.0);
-      }
-      var R = D(p1.x,p2.x,p1.y,p2.y)/2;
-
-      return (((p1.size*p2.size)/20)/(Math.pow(R,2)))/p1.size;
-    }
-
-    var applyF = function(p1,p2){
-      var F = Fg(p1,p2);
-
-      if(p1.x > p2.x){
-        p1.xSpeed -= F;
-      }else{
-        p1.xSpeed += F;
-      }
-
-      if(p1.y > p2.y){
-        p1.ySpeed -= F;
-      }else{
-        p1.ySpeed += F;
-      }
-    }
     for(let p=0; p< NOW_PARTICLES; p++){
       if(p!=i){
         let particle2 = particleArray[p];
+
         applyF(particle,particle2);
+				applyF(particle2,particle);
       }
     }
-    applyF(particle,{x:SUN_X,y:SUN_Y,size:100});
+
+		particle.tail.unshift({x:particle.x,y:particle.y});
+		particle.tail.pop();
 
     particle.x = Math.max(Math.min(particle.x + particle.xSpeed,window.innerWidth),0);
     particle.y = Math.max(Math.min(particle.y + particle.ySpeed,window.innerHeight),0)
 
     //bounce and evaporation
 
+		let  factor = 0.95;
+		if(particle.xSpeed > C){
+			particle.xSpeed = C;
+		}
+
+		if(particle.ySpeed > C){
+			particle.ySpeed = C;
+		}
+
+		if(particle.xSpeed < C*-1){
+			particle.xSpeed = C*-1;
+		}
+
+		if(particle.ySpeed < C*-1){
+			particle.ySpeed = C*-1;
+		}
+
     if (particle.x >= window.innerWidth || particle.x <= 0) {
-      particle.xSpeed *= -0.25;
-      particle.ySpeed *= 0.25;
-      particle.size *= 0.75;
-    }
-    if (particle.y >= window.innerHeight || particle.y <= 0) {
-      particle.ySpeed *= -0.25;
-      particle.xSpeed *= 0.25;
-      particle.size *= 0.75;
+      particle.xSpeed *= factor*-1;
+      particle.ySpeed *= factor;
+      particle.size *= factor;
     }
 
+    if (particle.y >= window.innerHeight || particle.y <= 0) {
+      particle.ySpeed *= factor*-1;
+      particle.xSpeed *= factor;
+      particle.size *= factor;
+    }
 
     //recycle particles that fly off the screen
     if (particle.x < -(particle.size) ||
@@ -155,13 +185,6 @@ $(window).resize(function() {
   var canvas = document.getElementById('canvas');
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
-});
-
-$(window).click(function(e){
-  SUN_X = e.pageX;
-  SUN_Y = e.pageY;
-
-  console.log(SUN_X,SUN_Y);
 });
 
 window.onload = function() {
