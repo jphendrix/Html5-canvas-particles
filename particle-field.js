@@ -12,7 +12,6 @@
  * http://paulirish.com/
  */
 if (!window.requestAnimationFrame) {
-
   window.requestAnimationFrame = (function() {
     return window.requestAnimationFrame ||
       window.webkitRequestAnimationFrame ||
@@ -27,8 +26,12 @@ if (!window.requestAnimationFrame) {
 
 const C = 10;
 const BACK_COLOR = 'black';
-const MAX_PARTICLES = 25;
-let MAX_SIZE = 100.00;
+let config = {
+	sun_a:{count:1,min_size:100, max_size:100, position:'center'},
+	sun_b:{count:1,min_size:50, max_size:50},
+	planet:{count:5,min_size:5, max_size:25},
+	moon:{count:7,min_size:1, max_size:5},
+}
 
 var canvas;
 var c;
@@ -38,13 +41,23 @@ function randomRange(min, max) {
   return ((Math.random() * (max - min)) + min);
 }
 
-function createParticle() {
-
+function createParticle(args) {
   var particle = {};
 
 	particle.tail = [];
-  particle.x = randomRange(0, window.innerWidth);
-  particle.y = randomRange(0, window.innerHeight);
+
+	console.log(args);
+	switch(args.position){
+		case 'center':
+			particle.x = window.innerWidth/2;
+			particle.y = window.innerHeight/2;
+			break;
+		default:
+			particle.x = randomRange(0, window.innerWidth);
+		  particle.y = randomRange(0, window.innerHeight);
+			break;
+	}
+
 
 	for(let i=0; i<500; i++){
 		particle.tail.push({x:particle.x,y:particle.y});
@@ -54,17 +67,17 @@ function createParticle() {
   particle.xSpeed = randomRange((-1) * v, v);
   particle.ySpeed = randomRange((-1) * v, v);
 
-  particle.size = MAX_SIZE;
+  particle.size = randomRange(args.min_size, args.max_size);
   particle.color = `rgb(${randomRange(0, 255)}, ${randomRange(0, 255)}, ${randomRange(0, 255)}, ${.5})`
-
-	MAX_SIZE = MAX_SIZE * 0.75;
   return particle;
 }
 
 function generateParticles() {
-  for (var i = 0; i < MAX_PARTICLES; i++) {
-    particleArray.push(createParticle());
-  }
+	for(let key in config){
+		for(let i=0; i<config[key].count; i++){
+				particleArray.push(createParticle(config[key]));
+		}
+	}
 }
 
 //Distiance
@@ -96,8 +109,35 @@ function applyF(p1,p2){
 	}else{
 		p1.ySpeed += F * (1-(Math.abs(p1.xSpeed)/C));
 	}
+}
 
+function move(){
+	for(let p1=0; p1<particleArray.length; p1++){
+		let particle1 = particleArray[p1];
+		for(let p2=0; p2<particleArray.length; p2++){
+			if(p1!=p2){
+				let particle2 = particleArray[p2];
+				applyF(particle1,particle2);
+				applyF(particle2,particle1);
+			}
+		}
+		particle1.tail.unshift({x:particle1.x,y:particle1.y});
+		particle1.tail.pop();
 
+		particle1.x +=particle1.xSpeed;
+		particle1.y +=particle1.ySpeed;
+
+		//bounce
+		if(p1==0){
+			if (particle1.x >= window.innerWidth || particle1.x <= window.innerWidth) {
+				particle1.xSpeed *= -1;
+			}
+
+			if (particle1.y >= window.innerHeight || particle1.y <= window.innerHeight) {
+				particle1.ySpeed *= -1;
+			}
+		}
+	}
 }
 
 function draw() {
@@ -105,7 +145,6 @@ function draw() {
   c.fillRect(0, 0, window.innerWidth, window.innerHeight);
 
   for (var i = 0; i < particleArray.length; i++) {
-
     var particle = particleArray[i];
     c.beginPath();
     c.fillStyle = particle.color;
@@ -120,43 +159,14 @@ function draw() {
 		}
 		c.strokeStyle = particle.color;
 		c.stroke();
-
     c.closePath();
-
-    for(let p=0; p< particleArray.length; p++){
-      if(p!=i){
-        let particle2 = particleArray[p];
-
-        applyF(particle,particle2);
-				applyF(particle2,particle);
-      }
-    }
-
-		particle.tail.unshift({x:particle.x,y:particle.y});
-		particle.tail.pop();
-
-    particle.x +=particle.xSpeed;
-    particle.y +=particle.ySpeed;
-
-    //bounce
-		if(i==0){
-			if (particle.x >= window.innerWidth || particle.x <= window.innerWidth) {
-	      particle.xSpeed *= -1;
-	    }
-
-	    if (particle.y >= window.innerHeight || particle.y <= window.innerHeight) {
-	      particle.ySpeed *= -1;
-	    }
-		}else{
-
-		}
-
   }
 }
 
 function animate() {
   requestAnimationFrame(animate);
   draw();
+	move();
 }
 
 $(window).resize(function() {
