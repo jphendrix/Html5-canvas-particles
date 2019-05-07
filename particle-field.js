@@ -25,12 +25,10 @@ if (!window.requestAnimationFrame) {
   })();
 }
 
-const C = 5;
+const C = 10;
 const BACK_COLOR = 'black';
-const MAX_PARTICLES = 50;
-const NOW_PARTICLES = 3;
-const MIN_SIZE = 1;
-const MAX_SIZE = 100000;
+const MAX_PARTICLES = 25;
+let MAX_SIZE = 100.00;
 
 var canvas;
 var c;
@@ -52,13 +50,14 @@ function createParticle() {
 		particle.tail.push({x:particle.x,y:particle.y});
 	}
 
-	let v = randomRange(0,C)/100;
+	let v = randomRange(0,C)/10;
   particle.xSpeed = randomRange((-1) * v, v);
   particle.ySpeed = randomRange((-1) * v, v);
 
-  particle.size = randomRange(MIN_SIZE, MAX_SIZE)/1000;
+  particle.size = MAX_SIZE;
   particle.color = `rgb(${randomRange(0, 255)}, ${randomRange(0, 255)}, ${randomRange(0, 255)}, ${.5})`
 
+	MAX_SIZE = MAX_SIZE * 0.75;
   return particle;
 }
 
@@ -70,13 +69,17 @@ function generateParticles() {
 
 //Distiance
 function D(p1,p2){
-	return Math.max(Math.sqrt(Math.pow(p2.x-p1.x,2) + Math.pow(p2.y-p1.y,2)),1.0);
+	let d = Math.max(Math.sqrt(Math.pow(p2.x-p1.x,2) + Math.pow(p2.y-p1.y,2)),1.0);
+	if(isNaN(d)){ console.log('D',p1,p2,d); return  500;}
+	return d;
 }
 
 //Force of g between two objects
 function Fg(p1,p2){
-	var d = D(p1,p2);
-	return ((((p1.size*p2.size)/20)/(Math.pow(d,1)))/Math.pow(p1.size,3))*2.5;
+	let d=D(p1,p2);
+	let f = ((((p1.size*p2.size)/20)/(Math.pow(d,1)))/Math.pow(p1.size,3))*2.5;
+	if(isNaN(f)){ console.log('F',p1,p2,f); return  0;}
+	return f;
 }
 
 function applyF(p1,p2){
@@ -101,7 +104,7 @@ function draw() {
 	c.fillStyle = BACK_COLOR;
   c.fillRect(0, 0, window.innerWidth, window.innerHeight);
 
-  for (var i = 0; i < NOW_PARTICLES; i++) {
+  for (var i = 0; i < particleArray.length; i++) {
 
     var particle = particleArray[i];
     c.beginPath();
@@ -120,7 +123,7 @@ function draw() {
 
     c.closePath();
 
-    for(let p=0; p< NOW_PARTICLES; p++){
+    for(let p=0; p< particleArray.length; p++){
       if(p!=i){
         let particle2 = particleArray[p];
 
@@ -132,47 +135,22 @@ function draw() {
 		particle.tail.unshift({x:particle.x,y:particle.y});
 		particle.tail.pop();
 
-    particle.x = Math.max(Math.min(particle.x + particle.xSpeed,window.innerWidth),0);
-    particle.y = Math.max(Math.min(particle.y + particle.ySpeed,window.innerHeight),0)
+    particle.x +=particle.xSpeed;
+    particle.y +=particle.ySpeed;
 
-    //bounce and evaporation
+    //bounce
+		if(i==0){
+			if (particle.x >= window.innerWidth || particle.x <= window.innerWidth) {
+	      particle.xSpeed *= -1;
+	    }
 
-		let  factor = 0.95;
-		if(particle.xSpeed > C){
-			particle.xSpeed = C;
+	    if (particle.y >= window.innerHeight || particle.y <= window.innerHeight) {
+	      particle.ySpeed *= -1;
+	    }
+		}else{
+
 		}
 
-		if(particle.ySpeed > C){
-			particle.ySpeed = C;
-		}
-
-		if(particle.xSpeed < C*-1){
-			particle.xSpeed = C*-1;
-		}
-
-		if(particle.ySpeed < C*-1){
-			particle.ySpeed = C*-1;
-		}
-
-    if (particle.x >= window.innerWidth || particle.x <= 0) {
-      particle.xSpeed *= factor*-1;
-      particle.ySpeed *= factor;
-      particle.size *= factor;
-    }
-
-    if (particle.y >= window.innerHeight || particle.y <= 0) {
-      particle.ySpeed *= factor*-1;
-      particle.xSpeed *= factor;
-      particle.size *= factor;
-    }
-
-    //recycle particles that fly off the screen
-    if (particle.x < -(particle.size) ||
-      particle.y < -(particle.size) ||
-      particle.x > window.innerWidth + particle.size ||
-      particle.y > window.innerHeight + particle.size) {
-      particleArray[i] = createParticle();
-    }
   }
 }
 
